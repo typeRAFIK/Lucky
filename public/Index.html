@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LuckyZone — Выиграй Дом!</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(135deg, #e0f7fa, #fff);
+      margin: 0;
+      padding: 20px;
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .container {
+      background: #fff;
+      max-width: 720px;
+      width: 100%;
+      padding: 40px 50px;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    h1 {
+      font-weight: 700;
+      font-size: 3rem;
+      color: #d32f2f;
+      margin-bottom: 10px;
+      letter-spacing: 0.05em;
+      user-select: none;
+    }
+    p.lead {
+      font-size: 1.4rem;
+      margin-bottom: 30px;
+      font-weight: 500;
+      color: #555;
+    }
+    .main-prize img {
+      width: 100%;
+      border-radius: 16px;
+      box-shadow: 0 12px 30px rgba(211, 47, 47, 0.25);
+      margin-bottom: 15px;
+      transition: transform 0.3s ease;
+    }
+    .main-prize img:hover {
+      transform: scale(1.03);
+    }
+    .main-prize p {
+      font-style: italic;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #d32f2f;
+      margin-bottom: 40px;
+      user-select: none;
+    }
+    .date-info {
+      font-size: 1.3rem;
+      color: #444;
+      margin-bottom: 25px;
+      font-weight: 600;
+      user-select: none;
+    }
+    .timer {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1565c0;
+      margin-bottom: 35px;
+      letter-spacing: 0.05em;
+      user-select: none;
+      font-family: 'Courier New', Courier, monospace;
+    }
+    ul {
+      text-align: left;
+      margin: 0 auto 40px auto;
+      padding-left: 24px;
+      max-width: 460px;
+      color: #555;
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+    ul li {
+      margin-bottom: 12px;
+      position: relative;
+    }
+    ul li::before {
+      content: "✔";
+      color: #43a047;
+      position: absolute;
+      left: -24px;
+      font-weight: bold;
+    }
+    .button, .info-button {
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      border-radius: 12px;
+      padding: 16px 30px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      user-select: none;
+      text-decoration: none;
+      color: white;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .button {
+      background: #d32f2f;
+      margin-top: 15px;
+      box-shadow: 0 8px 20px rgba(211, 47, 47, 0.3);
+    }
+    .button:hover {
+      background: #b71c1c;
+      box-shadow: 0 12px 28px rgba(183, 28, 28, 0.5);
+      transform: translateY(-3px);
+    }
+    .info-button {
+      background: #1976d2;
+      margin-bottom: 30px;
+      box-shadow: 0 8px 20px rgba(25, 118, 210, 0.3);
+    }
+    .info-button:hover {
+      background: #0d47a1;
+      box-shadow: 0 12px 28px rgba(13, 71, 161, 0.5);
+      transform: translateY(-3px);
+    }
+    .button svg {
+      margin-left: 10px;
+      stroke: #fff;
+      stroke-width: 2;
+      transition: transform 0.3s ease;
+    }
+    .button:hover svg {
+      transform: translateX(5px);
+    }
+    /* Модальные окна */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0; top: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0,0,0,0.6);
+      backdrop-filter: blur(3px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 15px;
+      box-sizing: border-box;
+    }
+    .modal-content {
+      background: white;
+      border-radius: 16px;
+      padding: 30px 40px;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+      position: relative;
+      text-align: left;
+      color: #333;
+      animation: fadeInUp 0.4s ease forwards;
+    }
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .close {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      font-size: 30px;
+      color: #777;
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.2s ease;
+    }
+    .close:hover {
+      color: #d32f2f;
+    }
+    .modal-content h2 {
+      font-weight: 700;
+      margin-bottom: 15px;
+      color: #d32f2f;
+      user-select: none;
+    }
+    .modal-content h3 {
+      margin-top: 30px;
+      margin-bottom: 12px;
+      font-weight: 600;
+      color: #1976d2;
+      user-select: none;
+    }
+    .modal-content ul {
+      list-style: none;
+      padding-left: 0;
+      color: #555;
+      font-size: 1rem;
+    }
+    .modal-content ul li {
+      margin-bottom: 10px;
+      position: relative;
+      padding-left: 24px;
+    }
+    .modal-content ul li::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: #d32f2f;
+      font-weight: bold;
+    }
+    /* Форма */
+    form label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #1976d2;
+      user-select: none;
+    }
+    form input {
+      width: 100%;
+      padding: 12px 15px;
+      margin-bottom: 20px;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+      box-sizing: border-box;
+    }
+    form input:focus {
+      border-color: #d32f2f;
+      outline: none;
+      box-shadow: 0 0 6px #d32f2f88;
+    }
+    form button.submit-btn {
+      background: #d32f2f;
+      border: none;
+      color: white;
+      padding: 16px 30px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      width: 100%;
+    }
+    form button.submit-btn:hover {
+      background: #b71c1c;
+      box-shadow: 0 12px 28px rgba(183, 28, 28, 0.5);
+      transform: translateY(-3px);
+    }
+    /* Адаптив */
+    @media (max-width: 640px) {
+      .container {
+        padding: 30px 25px;
+      }
+      h1 {
+        font-size: 2.2rem;
+      }
+      p.lead {
+        font-size: 1.1rem;
+      }
+      .timer {
+        font-size: 1.2rem;
+      }
+      ul, .modal-content ul {
+        font-size: 0.95rem;
+        max-width: 100%;
+      }
+      .button, .info-button {
+        font-size: 1rem;
+        padding: 14px 22px;
+      }
+      .modal-content {
+        padding: 25px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎁 LuckyZone</h1>
+    <p class="lead">Участвуй и выиграй <strong>главный приз — настоящий дом!</strong></p>
+    <div class="main-prize">
+      <img src="photo_5240014887902637164_y.jpg" alt="Приз — дом" />
+      <p>🏡 Современный дом может стать твоим!</p>
+    </div>
+    <div class="date-info">📅 Розыгрыш состоится <strong>29 сентября 2025 года в 12:00</strong></div>
+    <div class="timer" id="countdown">⏳ До розыгрыша осталось: загружаем...</div>
+    <h2>📋 Условия участия:</h2>
+    <ul>
+      <li>Купи билет на участие</li>
+      <li>Сохрани уникальный номер</li>
+      <li>Ожидай результаты розыгрыша</li>
+    </ul>
+    <button class="button info-button" id="openModalBtn">ℹ Показать призы и правила</button>
+    <button class="button" id="openFormBtn">
+      Купить билет сейчас
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+        <path d="M5 12h14"></path>
+        <path d="M12 5l7 7-7 7"></path>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Модальное окно с призами -->
+  <div id="infoModal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="modalTitle" aria-describedby="modalDesc">
+    <div class="modal-content" role="document">
+      <span class="close" id="closeModalBtn" aria-label="Закрыть">&times;</span>
+      <h2 id="modalTitle">🎉 Призы розыгрыша</h2>
+      <ul>
+        <li>3 × Dyson</li>
+        <li>3 × PlayStation 5</li>
+        <li>5 × Ноутбук</li>
+        <li>5 × Робот-пылесос</li>
+        <li>5 × Колонка</li>
+        <li>5 × Велосипед</li>
+        <li>5 × Телевизор</li>
+      </ul>
+      <h3>📜 Правила участия:</h3>
+      <ul>
+        <li>Приобрети билет на официальном сайте</li>
+        <li>Сохрани уникальный код</li>
+        <li>Дождись даты розыгрыша и проверь результаты</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Модальное окно с формой покупки билета -->
+  <div id="formModal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="formModalTitle">
+    <div class="modal-content" role="document">
+      <span class="close" id="closeFormBtn" aria-label="Закрыть">&times;</span>
+      <h2 id="formModalTitle">📝 Купить билет</h2>
+      <form id="ticketForm" novalidate>
+        <label for="firstName">Имя</label>
+        <input type="text" id="firstName" name="firstName" required placeholder="Введите ваше имя" />
+
+        <label for="lastName">Фамилия</label>
+        <input type="text" id="lastName" name="lastName" required placeholder="Введите вашу фамилию" />
+
+        <label for="email">Электронная почта</label>
+        <input type="email" id="email" name="email" required placeholder="example@mail.com" />
+
+        <label for="phone">Номер телефона</label>
+        <input type="tel" id="phone" name="phone" required placeholder="+7 900 123-45-67" pattern="^\+?\d{7,15}$" />
+
+        <button type="submit" class="submit-btn">Отправить</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Таймер обратного отсчёта
+    const drawDate = new Date("2025-09-29T12:00:00").getTime();
+    const countdown = document.getElementById("countdown");
+    const timer = setInterval(() => {
+      const now = new Date().getTime();
+      const distance = drawDate - now;
+      if (distance <= 0) {
+        clearInterval(timer);
+        countdown.textContent = "🎉 Розыгрыш начался!";
+        return;
+      }
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      countdown.textContent = `⏳ До розыгрыша: ${days} дн. ${hours} ч. ${minutes} мин. ${seconds} сек.`;
+    }, 1000);
+
+    // Модалки
+    const infoModal = document.getElementById('infoModal');
+    const openModalBtn = document.getElementById('openModalBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+
+    const formModal = document.getElementById('formModal');
+    const openFormBtn = document.getElementById('openFormBtn');
+    const closeFormBtn = document.getElementById('closeFormBtn');
+
+    openModalBtn.addEventListener('click', () => {
+      infoModal.style.display = 'flex';
+      infoModal.setAttribute('aria-hidden', 'false');
+    });
+    closeModalBtn.addEventListener('click', () => {
+      infoModal.style.display = 'none';
+      infoModal.setAttribute('aria-hidden', 'true');
+    });
+    window.addEventListener('click', (e) => {
+      if (e.target === infoModal) {
+        infoModal.style.display = 'none';
+        infoModal.setAttribute('aria-hidden', 'true');
+      }
+      if (e.target === formModal) {
+        formModal.style.display = 'none';
+        formModal.setAttribute('aria-hidden', 'true');
+      }
+    });
+
+    openFormBtn.addEventListener('click', () => {
+      formModal.style.display = 'flex';
+      formModal.setAttribute('aria-hidden', 'false');
+    });
+    closeFormBtn.addEventListener('click', () => {
+      formModal.style.display = 'none';
+      formModal.setAttribute('aria-hidden', 'true');
+    });
+
+    // Обработка формы
+    const ticketForm = document.getElementById('ticketForm');
+    ticketForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      if (!ticketForm.checkValidity()) {
+        ticketForm.reportValidity();
+        return;
+      }
+
+      const firstName = ticketForm.firstName.value.trim();
+      const lastName = ticketForm.lastName.value.trim();
+      const email = ticketForm.email.value.trim();
+      const phone = ticketForm.phone.value.trim();
+
+      // Здесь можно добавить отправку данных на сервер, пока просто alert
+      alert(
+        `Спасибо за покупку билета!\n\nИмя: ${firstName}\nФамилия: ${lastName}\nEmail: ${email}\nТелефон: ${phone}`
+      );
+
+      ticketForm.reset();
+      formModal.style.display = 'none';
+      formModal.setAttribute('aria-hidden', 'true');
+    });
+  </script>
+</body>
+</html>
