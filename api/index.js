@@ -1,14 +1,16 @@
 const express = require('express');
 const path = require('path');
-
 const app = express();
 
-// Отдаём статику
-app.use(express.static(path.join(__dirname, '..', 'public')));
+const PORT = process.env.PORT || 3000;
 
-// SPA fallback — все запросы отдаем index.html
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-module.exports = app;
+
+app.listen(PORT, () => {
+  console.log(`Server started on port ${PORT}`);
+});
